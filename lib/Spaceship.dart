@@ -7,6 +7,28 @@ class Spaceship extends StatelessWidget {
   Spaceship([this.color = Colors.blue]);
 
   final Color color;
+  final int spaceshipSpeed = 1;
+
+  // Navigation variables
+  double fromTop = 300.toDouble();
+  double fromLeft = 150.toDouble();
+  Positioned oldPosition;
+
+  Positioned performTurn(double tapX, double tapY){
+
+    if(oldPosition!=null && tapX!=null)
+    {
+      double oldTop = oldPosition.top;
+      double oldleft = oldPosition.left;
+
+      // Calculate new position
+      fromTop = tapY>oldTop?fromTop+spaceshipSpeed:fromTop-spaceshipSpeed;
+      fromLeft = tapX>oldleft?fromLeft+spaceshipSpeed:fromLeft-spaceshipSpeed;
+    }
+    Positioned newPosition = new Positioned(top: fromTop,left: fromLeft, child: this);
+    oldPosition = newPosition;
+    return newPosition;
+  }
 
   // This widget is the root of your application.
   @override

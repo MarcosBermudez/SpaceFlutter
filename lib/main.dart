@@ -25,12 +25,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   final Duration turnDuration = new Duration(milliseconds: 5);
-  final int step = 1;
+
 
   Timer t;
-  double fromTop = 300.toDouble();
-  double fromLeft = 150.toDouble();
-  Positioned oldPosition;
+
   final Spaceship ship =  new Spaceship(Colors.green);
 
   var tapX = null;
@@ -49,19 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void turn(){
 
     setState((){
-      if(oldPosition!=null && tapX!=null)
-        {
-          double oldTop = oldPosition.top;
-          double oldleft = oldPosition.left;
 
-          // Calculate new position
-          fromTop = tapY>oldTop?fromTop+step:fromTop-step;
-          fromLeft = tapX>oldleft?fromLeft+step:fromLeft-step;
-        }
-      Positioned newPosition = new Positioned(top: fromTop,left: fromLeft, child: ship);
-      oldPosition = newPosition;
       childs = [
-        newPosition,
+        ship.performTurn(tapX, tapY),
         new Positioned(top: 100.0,left: 100.0, child: new Missile()),
       ];
       }
