@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       oldPosition = newPosition;
       childs = [
         newPosition,
+        new Positioned(top: 100.0,left: 100.0, child: new Missile()),
       ];
       }
     );
