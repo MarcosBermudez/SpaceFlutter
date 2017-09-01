@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:duende/Spaceship.dart';
+import 'package:duende/SapceObjects.dart';
 
 void main() {
   runApp(new MyApp());
@@ -11,29 +11,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MyHomePage();
+    return new SpacePage();
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+class SpacePage extends StatefulWidget {
+  SpacePage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _SpacePageState createState() => new _SpacePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _SpacePageState extends State<SpacePage> {
 
   final Duration turnDuration = new Duration(milliseconds: 5);
 
 
-  Timer t;
 
   final Spaceship ship =  new Spaceship(Colors.green);
   final Missile missile =  new Missile();
 
   var tapX = null;
   var tapY = null;
+  Timer t;
 
   List<HasTurn> spaceObjects = null;
   List<Positioned> spaceObjectsPositionedForTurn = [];
@@ -49,15 +49,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-  void turn(){
-
-    setState((){
-        // Calculate new position for each of the space objects
-        spaceObjectsPositionedForTurn = spaceObjects.map((t)=>t.performTurn(tapX, tapY)).toList();
-      }
-    );
-
-  }
+    // Calculate new position for each of the space objects
+  void turn()=>
+    setState(()=> spaceObjectsPositionedForTurn = spaceObjects.map((t)=>t.performTurn(tapX, tapY)).toList());
 
 
   @override
