@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:duende/Spaceship.dart';
 
 void main() {
   runApp(new MyApp());
@@ -111,14 +112,12 @@ class _MyHomePageState extends State<MyHomePage> {
   _onTapUp(TapUpDetails details) {
     var x = details.globalPosition.dx;
     var y = details.globalPosition.dy;
-    print("tap up " + x.toString() + ", " + y.toString());
     _navigationEnd();
   }
 
   _onDragDown(DragDownDetails details) {
     var x = details.globalPosition.dx;
     var y = details.globalPosition.dy;
-    print("drag down " + x.toString() + ", " + y.toString());
     tapX=x;
     tapY=y;
   }
@@ -126,7 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
   _onDragUpdate(DragUpdateDetails details) {
     var x = details.globalPosition.dx;
     var y = details.globalPosition.dy;
-    print("drag update " + x.toString() + ", " + y.toString());
     tapX=x;
     tapY=y;
   }
@@ -139,48 +137,4 @@ class _MyHomePageState extends State<MyHomePage> {
 
 }
 
-class Spaceship extends StatelessWidget {
 
-
-  Spaceship([this.color = Colors.red]);
-
-  final Color color;
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return new CustomPaint(
-        size: new Size(50.0, 50.0),
-        painter: new BarChartPainter(50.toDouble(),color),
-    );
-  }
-}
-
-class BarChartPainter extends CustomPainter {
-  static const barWidth = 50.0;
-
-
-  BarChartPainter(this.barHeight, [this.color = Colors.red]);
-
-  final double barHeight;
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = new Paint()
-      ..color = this.color
-      ..style = PaintingStyle.fill;
-    canvas.drawRect(
-      new Rect.fromLTWH(
-        (size.width - barWidth) / 2.0,
-        size.height - barHeight,
-        barWidth,
-        barHeight,
-      ),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(BarChartPainter old) => barHeight != old.barHeight;
-}
