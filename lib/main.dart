@@ -41,14 +41,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    t = new Timer(turnDuration, turn);
+    t = new Timer.periodic(turnDuration, (Timer tim)=>turn());
   }
 
+
   void turn(){
-
-
-    // launch Again timer
-    t = new Timer(turnDuration, turn);
 
     setState((){
       if(oldPosition!=null && tapX!=null)
