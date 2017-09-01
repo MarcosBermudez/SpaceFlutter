@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 
-class Spaceship extends StatelessWidget {
+class HasTurn {
+
+  Positioned performTurn(double tapX, double tapY)=>null;
+
+}
+
+
+class Spaceship extends StatelessWidget implements HasTurn{
 
 
   Spaceship([this.color = Colors.blue]);
@@ -14,6 +21,7 @@ class Spaceship extends StatelessWidget {
   double fromLeft = 150.toDouble();
   Positioned oldPosition;
 
+  @override
   Positioned performTurn(double tapX, double tapY){
 
     if(oldPosition!=null && tapX!=null)
@@ -69,7 +77,7 @@ class SpaceshipPainter extends CustomPainter {
   bool shouldRepaint(SpaceshipPainter old) => barHeight != old.barHeight;
 }
 
-class Missile extends StatelessWidget {
+class Missile extends StatelessWidget implements HasTurn{
 
 
   Missile([this.color = Colors.red]);
@@ -83,6 +91,11 @@ class Missile extends StatelessWidget {
       size: new Size(10.0, 15.0),
       painter: new MissilePainter(color),
     );
+  }
+
+  @override
+  Positioned performTurn(double tapX, double tapY) {
+    return new Positioned(top: 100.0,left: 100.0, child: this);
   }
 }
 

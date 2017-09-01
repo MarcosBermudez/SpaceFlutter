@@ -30,28 +30,30 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer t;
 
   final Spaceship ship =  new Spaceship(Colors.green);
+  final Missile missile =  new Missile();
 
   var tapX = null;
   var tapY = null;
 
-  List<Widget> childs = [];
+  List<HasTurn> spaceObjects = null;
+  List<Positioned> spaceObjectsPositionedForTurn = [];
 
 
   @override
   void initState() {
     super.initState();
     t = new Timer.periodic(turnDuration, (Timer tim)=>turn());
+
+    //Initialize start
+    spaceObjects =[ship, missile];
   }
 
 
   void turn(){
 
     setState((){
-
-      childs = [
-        ship.performTurn(tapX, tapY),
-        new Positioned(top: 100.0,left: 100.0, child: new Missile()),
-      ];
+        // Calculate new position for each of the space objects
+        spaceObjectsPositionedForTurn = spaceObjects.map((t)=>t.performTurn(tapX, tapY)).toList();
       }
     );
 
@@ -85,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: new Stack(
           fit: StackFit.passthrough,
-          children: childs,
+          children: spaceObjectsPositionedForTurn,
         ),
       ),
     );
