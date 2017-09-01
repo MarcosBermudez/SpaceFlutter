@@ -81,9 +81,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return new GestureDetector(
       onTapDown: (TapDownDetails details) => _onTapDown(details),
       onVerticalDragDown: (DragDownDetails details) => _onDragDown(details),
+      onVerticalDragUpdate:  (DragUpdateDetails details) => _onDragUpdate(details),
+      onVerticalDragEnd: (DragEndDetails details) => _navigationEnd(),
+      onVerticalDragCancel: () => _navigationEnd(),
       onHorizontalDragDown: (DragDownDetails details) => _onDragDown(details),
       onHorizontalDragUpdate: (DragUpdateDetails details) => _onDragUpdate(details),
-      onVerticalDragUpdate:  (DragUpdateDetails details) => _onDragUpdate(details),
+      onHorizontalDragEnd: (DragEndDetails details) => _navigationEnd(),
+      onHorizontalDragCancel: () => _navigationEnd(),
       onTapUp: (TapUpDetails details) => _onTapUp(details),
       child: new Container(
         decoration: new BoxDecoration(
