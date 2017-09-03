@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 
-
 class HasTurn {
-
-  Positioned performTurn(double tapX, double tapY)=>null;
-
+  Positioned performTurn(double tapX, double tapY) => null;
 }
 
-
-class Spaceship extends StatelessWidget implements HasTurn{
-
-
+class Spaceship extends StatelessWidget implements HasTurn {
   Spaceship([this.color = Colors.blue]);
 
   final Color color;
@@ -22,18 +16,20 @@ class Spaceship extends StatelessWidget implements HasTurn{
   Positioned oldPosition;
 
   @override
-  Positioned performTurn(double tapX, double tapY){
-
-    if(oldPosition!=null && tapX!=null)
-    {
+  Positioned performTurn(double tapX, double tapY) {
+    if (oldPosition != null && tapX != null) {
       double oldTop = oldPosition.top;
-      double oldleft = oldPosition.left;
+      double oldLeft = oldPosition.left;
 
       // Calculate new position
-      fromTop = tapY>oldTop?fromTop+spaceshipSpeed:fromTop-spaceshipSpeed;
-      fromLeft = tapX>oldleft?fromLeft+spaceshipSpeed:fromLeft-spaceshipSpeed;
+      fromTop =
+          tapY > oldTop ? fromTop + spaceshipSpeed : fromTop - spaceshipSpeed;
+      fromLeft = tapX > oldLeft
+          ? fromLeft + spaceshipSpeed
+          : fromLeft - spaceshipSpeed;
     }
-    Positioned newPosition = new Positioned(top: fromTop,left: fromLeft, child: this);
+    Positioned newPosition =
+        new Positioned(top: fromTop, left: fromLeft, child: this);
     oldPosition = newPosition;
     return newPosition;
   }
@@ -43,14 +39,13 @@ class Spaceship extends StatelessWidget implements HasTurn{
   Widget build(BuildContext context) {
     return new CustomPaint(
       size: new Size(50.0, 50.0),
-      painter: new SpaceshipPainter(50.toDouble(),color),
+      painter: new SpaceshipPainter(50.toDouble(), color),
     );
   }
 }
 
 class SpaceshipPainter extends CustomPainter {
   static const barWidth = 50.0;
-
 
   SpaceshipPainter(this.barHeight, this.color);
 
@@ -77,14 +72,11 @@ class SpaceshipPainter extends CustomPainter {
   bool shouldRepaint(SpaceshipPainter old) => barHeight != old.barHeight;
 }
 
-class Missile extends StatelessWidget implements HasTurn{
-
-
+class Missile extends StatelessWidget implements HasTurn {
   Missile([this.color = Colors.red]);
 
   final Color color;
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return new CustomPaint(
@@ -95,7 +87,7 @@ class Missile extends StatelessWidget implements HasTurn{
 
   @override
   Positioned performTurn(double tapX, double tapY) {
-    return new Positioned(top: 100.0,left: 100.0, child: this);
+    return new Positioned(top: 100.0, left: 100.0, child: this);
   }
 }
 
