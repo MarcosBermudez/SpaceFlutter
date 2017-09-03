@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 
 class HasTurn {
   Positioned performTurn(double tapX, double tapY) => null;
+
+  bool isMissile() => false;
+
+  void impacted(HasTurn object){}
+
+  double lastTop=100.0;
+  double lastLeft=100.0;
+  double width = 10.0;
+  double height = 15.0;
 }
 
 class Spaceship extends StatelessWidget implements HasTurn {
@@ -11,46 +20,60 @@ class Spaceship extends StatelessWidget implements HasTurn {
   final int spaceshipSpeed = 1;
 
   // Navigation variables
-  double fromTop = 300.toDouble();
-  double fromLeft = 150.toDouble();
-  Positioned oldPosition;
+  double lastTop=300.0;
+  double lastLeft=150.0;
+  double width = 50.0;
+  double height = 50.0;
+  Positioned lastPosition;
+
+  //Painter
+  SpaceshipPainter painter = new SpaceshipPainter(50.toDouble());
 
   @override
   Positioned performTurn(double tapX, double tapY) {
-    if (oldPosition != null && tapX != null) {
-      double oldTop = oldPosition.top;
-      double oldLeft = oldPosition.left;
+    if (lastPosition != null && tapX != null) {
+      double oldTop = lastPosition.top;
+      double oldLeft = lastPosition.left;
 
       // Calculate new position
-      fromTop =
-          tapY > oldTop ? fromTop + spaceshipSpeed : fromTop - spaceshipSpeed;
-      fromLeft = tapX > oldLeft
-          ? fromLeft + spaceshipSpeed
-          : fromLeft - spaceshipSpeed;
+      lastTop =
+          tapY > oldTop ? lastTop + spaceshipSpeed : lastTop - spaceshipSpeed;
+      lastLeft = tapX > oldLeft
+          ? lastLeft + spaceshipSpeed
+          : lastLeft - spaceshipSpeed;
     }
     Positioned newPosition =
-        new Positioned(top: fromTop, left: fromLeft, child: this);
-    oldPosition = newPosition;
+        new Positioned(top: lastTop, left: lastLeft, child: this);
+    lastPosition = newPosition;
     return newPosition;
   }
+
+  @override
+  bool isMissile() => false;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    painter.color = color;
     return new CustomPaint(
-      size: new Size(50.0, 50.0),
-      painter: new SpaceshipPainter(50.toDouble(), color),
+      size: new Size(width, height),
+      painter: painter,
     );
+  }
+
+  @override
+  void impacted(HasTurn object) {
+    painter.color=Colors.black;
   }
 }
 
 class SpaceshipPainter extends CustomPainter {
   static const barWidth = 50.0;
 
-  SpaceshipPainter(this.barHeight, this.color);
+  SpaceshipPainter(this.barHeight);
 
   final double barHeight;
-  final Color color;
+  Color color = Colors.blue;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -69,7 +92,7 @@ class SpaceshipPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(SpaceshipPainter old) => barHeight != old.barHeight;
+  bool shouldRepaint(SpaceshipPainter old) => color != old.color;
 }
 
 class Missile extends StatelessWidget implements HasTurn {
@@ -77,10 +100,15 @@ class Missile extends StatelessWidget implements HasTurn {
 
   final Color color;
 
+  double lastTop=100.0;
+  double lastLeft=100.0;
+  double width = 10.0;
+  double height = 15.0;
+
   @override
   Widget build(BuildContext context) {
     return new CustomPaint(
-      size: new Size(10.0, 15.0),
+      size: new Size(width, height),
       painter: new MissilePainter(color),
     );
   }
@@ -88,6 +116,14 @@ class Missile extends StatelessWidget implements HasTurn {
   @override
   Positioned performTurn(double tapX, double tapY) {
     return new Positioned(top: 100.0, left: 100.0, child: this);
+  }
+
+  @override
+  bool isMissile() => true;
+
+  @override
+  void impacted(HasTurn object) {
+    // TODO: implement impacted
   }
 }
 

@@ -44,9 +44,52 @@ class _SpacePageState extends State<SpacePage> {
     spaceObjects = [ship, missile];
   }
 
-  // Calculate new position for each of the space objects
-  void turn() => setState(() => spaceObjectsPositionedForTurn =
+  void turn() {
+
+    List<HasTurn> ships = spaceObjects.where((o)=>!o.isMissile()).toList();
+    List<HasTurn> missiles = spaceObjects.where((o)=>o.isMissile()).toList();
+
+    double r = 50.0;
+
+    // TODO Calculate missile impacts
+    missiles.forEach((HasTurn m)=>
+      ships.where((s)=>isImpact(m, s)).forEach((s) =>s.impacted(m)));
+
+
+    // Calculate new position for each of the space objects
+    setState(() => spaceObjectsPositionedForTurn =
       spaceObjects.map((t) => t.performTurn(tapX, tapY)).toList());
+
+    // TODO Calculate new space objects
+
+  }
+
+  bool isImpact(HasTurn missile, HasTurn spaceObject){
+
+    // TODO
+    double mx =missile.lastLeft;
+    double my =missile.lastTop;
+    double mw =missile.width;
+    double mh =missile.height;
+
+    double sx =spaceObject.lastLeft;
+    double sy =spaceObject.lastTop;
+    double sw =spaceObject.width;
+    double sh =spaceObject.height;
+
+    // Validate impact X
+    double distanceX = (mx-sx).abs();
+    double width = mx<sx?mw:sw;
+    if(distanceX>width) return false;
+
+    // Validate impact Y
+    double distanceY = (my-sy).abs();
+    double height = my<sy?mh:sh;
+    if(distanceY>height) return false;
+
+    // Ok validate impact
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +119,7 @@ class _SpacePageState extends State<SpacePage> {
         child: new Stack(
           fit: StackFit.passthrough,
           children: spaceObjectsPositionedForTurn,
+
         ),
       ),
     );
