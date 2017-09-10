@@ -7,11 +7,24 @@ void main() {
   runApp(new MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return new SpacePage();
+class MyApp extends WidgetsApp {
+  WidgetsApp app;
+
+  static double height, width;
+
+  MyApp()
+      : super(
+          initialRoute: '/',
+          onGenerateRoute: myRouteFactory,
+          navigatorObservers: [],
+          color: Colors.black,
+        );
+
+  static Route<dynamic> myRouteFactory(RouteSettings settings) {
+    return new PageRouteBuilder(
+        pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) =>
+            new SpacePage());
   }
 }
 
@@ -45,47 +58,50 @@ class _SpacePageState extends State<SpacePage> {
   }
 
   void turn() {
+      List<HasTurn> ships = spaceObjects.where((o) => !o.isMissile()).toList();
+      List<HasTurn> missiles =
+          spaceObjects.where((o) => o.isMissile()).toList();
 
-    List<HasTurn> ships = spaceObjects.where((o)=>!o.isMissile()).toList();
-    List<HasTurn> missiles = spaceObjects.where((o)=>o.isMissile()).toList();
+      // Calculate missile impacts
+      missiles.forEach((HasTurn m) =>
+          ships.where((s) => isImpact(m, s)).forEach((s) => s.impacted(m)));
 
-    double r = 50.0;
+      // Calculate new position for each of the space objects
+      setState(() => spaceObjectsPositionedForTurn =
+          spaceObjects.map((t) => t.performTurn(tapX, tapY)).toList());
 
-    // TODO Calculate missile impacts
-    missiles.forEach((HasTurn m)=>
-      ships.where((s)=>isImpact(m, s)).forEach((s) =>s.impacted(m)));
+      // Remove old space objects
+      spaceObjects.removeWhere((HasTurn t) {
+        return t.isGoneOfSpace(MyApp.width, MyApp.height);
+      });
 
-
-    // Calculate new position for each of the space objects
-    setState(() => spaceObjectsPositionedForTurn =
-      spaceObjects.map((t) => t.performTurn(tapX, tapY)).toList());
-
-    // TODO Calculate new space objects
-
+      // FIXME Quick solution to ad missile
+      if (spaceObjects.length == 1) {
+        spaceObjects.add(new Missile());
+      }
   }
 
-  bool isImpact(HasTurn missile, HasTurn spaceObject){
-
+  bool isImpact(HasTurn missile, HasTurn spaceObject) {
     // TODO
-    double mx =missile.lastLeft;
-    double my =missile.lastTop;
-    double mw =missile.width;
-    double mh =missile.height;
+    double mx = missile.lastLeft;
+    double my = missile.lastTop;
+    double mw = missile.width;
+    double mh = missile.height;
 
-    double sx =spaceObject.lastLeft;
-    double sy =spaceObject.lastTop;
-    double sw =spaceObject.width;
-    double sh =spaceObject.height;
+    double sx = spaceObject.lastLeft;
+    double sy = spaceObject.lastTop;
+    double sw = spaceObject.width;
+    double sh = spaceObject.height;
 
     // Validate impact X
-    double distanceX = (mx-sx).abs();
-    double width = mx<sx?mw:sw;
-    if(distanceX>width) return false;
+    double distanceX = (mx - sx).abs();
+    double width = mx < sx ? mw : sw;
+    if (distanceX > width) return false;
 
     // Validate impact Y
-    double distanceY = (my-sy).abs();
-    double height = my<sy?mh:sh;
-    if(distanceY>height) return false;
+    double distanceY = (my - sy).abs();
+    double height = my < sy ? mh : sh;
+    if (distanceY > height) return false;
 
     // Ok validate impact
     return true;
@@ -93,6 +109,11 @@ class _SpacePageState extends State<SpacePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (MyApp.width == null) {
+      MyApp.height = MediaQuery.of(context).size.height;
+      MyApp.width = MediaQuery.of(context).size.width;
+      print("Size is "+MyApp.height.toString()+","+MyApp.width.toString());
+    }
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
@@ -119,7 +140,6 @@ class _SpacePageState extends State<SpacePage> {
         child: new Stack(
           fit: StackFit.passthrough,
           children: spaceObjectsPositionedForTurn,
-
         ),
       ),
     );

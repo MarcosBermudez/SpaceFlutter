@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:duende/main.dart';
 
 class HasTurn {
   Positioned performTurn(double tapX, double tapY) => null;
 
   bool isMissile() => false;
 
-  void impacted(HasTurn object){}
+  void impacted(HasTurn object) {}
 
-  double lastTop=100.0;
-  double lastLeft=100.0;
+  bool isGoneOfSpace(double width, double height) => true;
+
+  double lastTop = 100.0;
+  double lastLeft = 100.0;
   double width = 10.0;
   double height = 15.0;
 }
@@ -20,8 +23,8 @@ class Spaceship extends StatelessWidget implements HasTurn {
   final int spaceshipSpeed = 1;
 
   // Navigation variables
-  double lastTop=300.0;
-  double lastLeft=150.0;
+  double lastTop = 300.0;
+  double lastLeft = 150.0;
   double width = 50.0;
   double height = 50.0;
   Positioned lastPosition;
@@ -51,6 +54,9 @@ class Spaceship extends StatelessWidget implements HasTurn {
   @override
   bool isMissile() => false;
 
+  @override
+  bool isGoneOfSpace(double width, double height) => false;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -63,7 +69,7 @@ class Spaceship extends StatelessWidget implements HasTurn {
 
   @override
   void impacted(HasTurn object) {
-    painter.color=Colors.black;
+    painter.color = Colors.black;
   }
 }
 
@@ -99,9 +105,10 @@ class Missile extends StatelessWidget implements HasTurn {
   Missile([this.color = Colors.red]);
 
   final Color color;
+  final double speed = 1.0;
 
-  double lastTop=100.0;
-  double lastLeft=100.0;
+  double lastTop = 100.0;
+  double lastLeft = 100.0;
   double width = 10.0;
   double height = 15.0;
 
@@ -115,11 +122,15 @@ class Missile extends StatelessWidget implements HasTurn {
 
   @override
   Positioned performTurn(double tapX, double tapY) {
-    return new Positioned(top: 100.0, left: 100.0, child: this);
+    lastTop = lastTop + speed;
+    return new Positioned(top: lastTop, left: lastLeft, child: this);
   }
 
   @override
   bool isMissile() => true;
+
+  @override
+  bool isGoneOfSpace(double width, double height) => lastTop > height;
 
   @override
   void impacted(HasTurn object) {
