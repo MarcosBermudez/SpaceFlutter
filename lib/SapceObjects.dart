@@ -23,23 +23,28 @@ class HasTurn {
 }
 
 class Spaceship extends StatefulWidget implements HasTurn {
-  Spaceship([this.color = Colors.blue]);
 
-  final Color color;
   final int spaceshipSpeed = 100; // In pixels by second
 
   // Navigation variables
   double lastTop = 300.0;
   double lastLeft = 150.0;
-  double width = 50.0;
-  double height = 50.0;
   Positioned lastPosition;
+
+  // Size variables
+  double width = 115.0;
+  double height = 120.0;
+
 
   _ShipSpaceshipState state = new _ShipSpaceshipState();
 
   @override
   Positioned performTurn(int deltaTimeSinceLastTurn, double tapX, double tapY) {
     if (lastPosition != null && tapX != null && !state.isImpacted()) {
+
+      // Adjust navigation into the middle of plane
+      double adjustedTapX=tapX-width/2 , adjustedTapY=tapY-height/2;
+
       double oldTop = lastPosition.top;
       double oldLeft = lastPosition.left;
 
@@ -48,13 +53,13 @@ class Spaceship extends StatefulWidget implements HasTurn {
 
       // Calculate new position
       lastTop =
-          tapY > oldTop ? lastTop + distanceMoved : lastTop - distanceMoved;
+          adjustedTapY > oldTop ? lastTop + distanceMoved : lastTop - distanceMoved;
       lastLeft =
-          tapX > oldLeft ? lastLeft + distanceMoved : lastLeft - distanceMoved;
+          adjustedTapX > oldLeft ? lastLeft + distanceMoved : lastLeft - distanceMoved;
 
       // If distance is less than we can move, move directly to target
-      if ((oldTop - tapY).abs() < distanceMoved) lastTop = tapY;
-      if ((oldLeft - tapX).abs() < distanceMoved) lastLeft = tapX;
+      if ((oldTop - adjustedTapY).abs() < distanceMoved) lastTop = adjustedTapY;
+      if ((oldLeft - adjustedTapX).abs() < distanceMoved) lastLeft = adjustedTapX;
     }
 
     // Inform of new turn in state;
@@ -125,6 +130,7 @@ class _ShipSpaceshipState extends State<Spaceship> {
 }
 
 class Missile extends StatelessWidget implements HasTurn {
+
   Missile([this.color = Colors.red]);
 
   final Color color;
@@ -134,6 +140,7 @@ class Missile extends StatelessWidget implements HasTurn {
   double lastLeft = 100.0;
   double width = 10.0;
   double height = 15.0;
+  bool explosed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -156,12 +163,14 @@ class Missile extends StatelessWidget implements HasTurn {
   bool isMissile() => true;
 
   @override
-  bool isGoneOfSpace(double width, double height) => lastTop > height;
+  bool isGoneOfSpace(double width, double height) => lastTop > height || isExplosed();
 
   @override
   void impacted(HasTurn object) {
-    // TODO: implement impacted
+    explosed=true;
   }
+
+  bool isExplosed() => explosed;
 }
 
 class MissilePainter extends CustomPainter {

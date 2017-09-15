@@ -38,7 +38,7 @@ class SpacePage extends StatefulWidget {
 class _SpacePageState extends State<SpacePage> {
   final Duration wakeUpDuration = new Duration(milliseconds: 5);
 
-  final Spaceship ship = new Spaceship(Colors.green);
+  final Spaceship ship = new Spaceship();
   final Missile missile = new Missile();
 
   var tapX = null;
@@ -87,7 +87,7 @@ class _SpacePageState extends State<SpacePage> {
 
     // Calculate missile impacts
     missiles.forEach((HasTurn m) =>
-        ships.where((s) => isImpact(m, s)).forEach((s) => s.impacted(m)));
+        ships.where((s) => isImpact(m, s)).forEach((s) { s.impacted(m);m.impacted(s);}));
 
     // Calculate new position for each of the space objects
     setState(() => spaceObjectsPositionedForTurn =
