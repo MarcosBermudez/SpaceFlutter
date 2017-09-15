@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:duende/main.dart';
 
 class HasTurn {
-  Positioned performTurn(double tapX, double tapY) => null;
+  Positioned performTurn(int deltaTimeSinceLastTurn, double tapX, double tapY) => null;
 
   bool isMissile() => false;
 
@@ -20,7 +19,7 @@ class Spaceship extends StatelessWidget implements HasTurn {
   Spaceship([this.color = Colors.blue]);
 
   final Color color;
-  final int spaceshipSpeed = 1;
+  final int spaceshipSpeed = 100; // In pixels by second
 
   // Navigation variables
   double lastTop = 300.0;
@@ -33,18 +32,26 @@ class Spaceship extends StatelessWidget implements HasTurn {
   SpaceshipPainter painter = new SpaceshipPainter(50.toDouble());
 
   @override
-  Positioned performTurn(double tapX, double tapY) {
+  Positioned performTurn(int deltaTimeSinceLastTurn, double tapX, double tapY) {
     if (lastPosition != null && tapX != null) {
       double oldTop = lastPosition.top;
       double oldLeft = lastPosition.left;
 
+      int distanceMoved = ((spaceshipSpeed * deltaTimeSinceLastTurn) /1000).round();
+
       // Calculate new position
       lastTop =
-          tapY > oldTop ? lastTop + spaceshipSpeed : lastTop - spaceshipSpeed;
+          tapY > oldTop ? lastTop + distanceMoved : lastTop - distanceMoved;
       lastLeft = tapX > oldLeft
-          ? lastLeft + spaceshipSpeed
-          : lastLeft - spaceshipSpeed;
+          ? lastLeft + distanceMoved
+          : lastLeft - distanceMoved;
+
+      // If distance is less than we can move, move directly to target
+      if((oldTop-tapY).abs()<distanceMoved) lastTop=tapY;
+      if((oldLeft-tapX).abs()<distanceMoved) lastLeft=tapX;
     }
+
+
     Positioned newPosition =
         new Positioned(top: lastTop, left: lastLeft, child: this);
     lastPosition = newPosition;
@@ -105,9 +112,9 @@ class Missile extends StatelessWidget implements HasTurn {
   Missile([this.color = Colors.red]);
 
   final Color color;
-  final double speed = 1.0;
+  final int speed = 150;// Speed in pixels by second
 
-  double lastTop = 100.0;
+  double lastTop = 0.0;
   double lastLeft = 100.0;
   double width = 10.0;
   double height = 15.0;
@@ -121,8 +128,12 @@ class Missile extends StatelessWidget implements HasTurn {
   }
 
   @override
-  Positioned performTurn(double tapX, double tapY) {
-    lastTop = lastTop + speed;
+  Positioned performTurn(int deltaTimeSinceLastTurn, double tapX, double tapY) {
+
+    int distanceMoved = ((speed * deltaTimeSinceLastTurn) /1000).round();
+
+    lastTop = lastTop + distanceMoved;
+
     return new Positioned(top: lastTop, left: lastLeft, child: this);
   }
 

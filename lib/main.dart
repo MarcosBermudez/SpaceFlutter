@@ -36,7 +36,7 @@ class SpacePage extends StatefulWidget {
 }
 
 class _SpacePageState extends State<SpacePage> {
-  final Duration turnDuration = new Duration(milliseconds: 5);
+  final Duration wakeUpDuration = new Duration(milliseconds: 5);
 
   final Spaceship ship = new Spaceship(Colors.green);
   final Missile missile = new Missile();
@@ -45,40 +45,63 @@ class _SpacePageState extends State<SpacePage> {
   var tapY = null;
   Timer t;
 
+  static int fps = 30;
+  static int timePerTurn = (1000 / fps).round();
+  int delta = 0, timer = 0, now = 0;
+  int lastTime;
+
   List<HasTurn> spaceObjects = null;
   List<Positioned> spaceObjectsPositionedForTurn = [];
+
+  bool running = false;
 
   @override
   void initState() {
     super.initState();
-    t = new Timer.periodic(turnDuration, (Timer tim) => turn());
 
     //Initialize start
     spaceObjects = [ship, missile];
+
+    // Init last time
+    lastTime = new DateTime.now().millisecondsSinceEpoch;
+
+    t = new Timer.periodic(wakeUpDuration, (t) => onWakeUp());
   }
 
-  void turn() {
-      List<HasTurn> ships = spaceObjects.where((o) => !o.isMissile()).toList();
-      List<HasTurn> missiles =
-          spaceObjects.where((o) => o.isMissile()).toList();
-
-      // Calculate missile impacts
-      missiles.forEach((HasTurn m) =>
-          ships.where((s) => isImpact(m, s)).forEach((s) => s.impacted(m)));
-
-      // Calculate new position for each of the space objects
-      setState(() => spaceObjectsPositionedForTurn =
-          spaceObjects.map((t) => t.performTurn(tapX, tapY)).toList());
-
-      // Remove old space objects
-      spaceObjects.removeWhere((HasTurn t) {
-        return t.isGoneOfSpace(MyApp.width, MyApp.height);
-      });
-
-      // FIXME Quick solution to ad missile
-      if (spaceObjects.length == 1) {
-        spaceObjects.add(new Missile());
+  void onWakeUp() {
+    if (running) {
+      now = new DateTime.now().millisecondsSinceEpoch;
+      delta = now - lastTime;
+      timer = timer + delta;
+      lastTime = now;
+      if (timer >= timePerTurn) {
+        turn(timer);
+        timer = 0;
       }
+    }
+  }
+
+  void turn(int deltaTimeSinceLastTurn) {
+    List<HasTurn> ships = spaceObjects.where((o) => !o.isMissile()).toList();
+    List<HasTurn> missiles = spaceObjects.where((o) => o.isMissile()).toList();
+
+    // Calculate missile impacts
+    missiles.forEach((HasTurn m) =>
+        ships.where((s) => isImpact(m, s)).forEach((s) => s.impacted(m)));
+
+    // Calculate new position for each of the space objects
+    setState(() => spaceObjectsPositionedForTurn =
+        spaceObjects.map((t) => t.performTurn(deltaTimeSinceLastTurn, tapX, tapY)).toList());
+
+    // Remove old space objects
+    spaceObjects.removeWhere((HasTurn t) {
+      return t.isGoneOfSpace(MyApp.width, MyApp.height);
+    });
+
+    // FIXME Quick solution to ad missile
+    if (spaceObjects.length == 1) {
+      spaceObjects.add(new Missile());
+    }
   }
 
   bool isImpact(HasTurn missile, HasTurn spaceObject) {
@@ -110,9 +133,11 @@ class _SpacePageState extends State<SpacePage> {
   @override
   Widget build(BuildContext context) {
     if (MyApp.width == null) {
+      running=true;
       MyApp.height = MediaQuery.of(context).size.height;
       MyApp.width = MediaQuery.of(context).size.width;
-      print("Size is "+MyApp.height.toString()+","+MyApp.width.toString());
+      print(
+          "Size is " + MyApp.height.toString() + "," + MyApp.width.toString());
     }
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
