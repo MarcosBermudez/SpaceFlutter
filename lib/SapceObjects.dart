@@ -91,7 +91,7 @@ class Spaceship extends StatefulWidget implements HasTurn {
 class _ShipSpaceshipState extends State<Spaceship> {
   int impactedTurn = 0;
 
-  Image image = new Image.asset('assets/images/ships/1.png');
+  Image image = new Image.asset('assets/images/ships/red0/1.png');
 
   int deltaSinceLastState = 0;
   int timePerState = 50;
@@ -118,7 +118,7 @@ class _ShipSpaceshipState extends State<Spaceship> {
   Widget build(BuildContext context) {
     if (isImpacted() && !isDestroyed()) {
       image = new Image.asset(
-          'assets/images/ships/' + impactedTurn.toString() + '.png');
+          'assets/images/ships/red0/' + impactedTurn.toString() + '.png');
       impactedTurn++;
     }
     return image;
