@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
-import 'package:flutter/services.dart';
+import 'dart:math';
 
 // Images from
 // https://opengameart.org/content/space-ship-construction-kit
@@ -131,8 +130,6 @@ class _ShipSpaceshipState extends State<Spaceship> {
 
 class Missile extends StatelessWidget implements HasTurn {
 
-  Missile([this.color = Colors.red]);
-
   final Color color;
   final int speed = 150; // Speed in pixels by second
 
@@ -141,6 +138,10 @@ class Missile extends StatelessWidget implements HasTurn {
   double width = 10.0;
   double height = 15.0;
   bool explosed = false;
+
+  Missile(double width, double height,[this.color = Colors.red]){
+    lastLeft = new Random().nextInt(width.toInt())/1.0;
+  }
 
   @override
   Widget build(BuildContext context) {

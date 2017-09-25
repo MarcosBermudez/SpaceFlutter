@@ -20,11 +20,40 @@ class MyApp extends WidgetsApp {
           color: Colors.black,
         );
 
-  static Route<dynamic> myRouteFactory(RouteSettings settings) {
-    return new PageRouteBuilder(
-        pageBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation) =>
-            new SpacePage());
+  static MenuPage menu = new MenuPage();
+
+  static Route<dynamic> myRouteFactory(RouteSettings settings) =>
+      new PageRouteBuilder(pageBuilder: (BuildContext context,
+      Animation<double> animation, Animation<double> secondaryAnimation)=>settings.name=='/'?menu:new SpacePage());
+}
+
+class MenuPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      decoration: new BoxDecoration(
+        image: new DecorationImage(
+          image: new AssetImage("assets/images/space1.png"),
+          fit: BoxFit.cover,
+        ),
+      ),
+      alignment: FractionalOffset.center,
+      child: new GestureDetector(
+        child: new Container(
+          color: const Color(0xFF00FF00),
+          width: 120.0,
+          height: 25.0,
+          alignment: FractionalOffset.center,
+          child: new Text(
+            'Start Game',
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: new TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        onTapUp: ((_) => Navigator.of(context).pushNamed('/space')),
+      ),
+    );
   }
 }
 
@@ -39,7 +68,6 @@ class _SpacePageState extends State<SpacePage> {
   final Duration wakeUpDuration = new Duration(milliseconds: 5);
 
   final Spaceship ship = new Spaceship();
-  final Missile missile = new Missile();
 
   var tapX = null;
   var tapY = null;
@@ -60,11 +88,12 @@ class _SpacePageState extends State<SpacePage> {
     super.initState();
 
     //Initialize start
-    spaceObjects = [ship, missile];
+    spaceObjects = [ship];
 
     // Init last time
     lastTime = new DateTime.now().millisecondsSinceEpoch;
 
+    // Init timer
     t = new Timer.periodic(wakeUpDuration, (t) => onWakeUp());
   }
 
@@ -82,25 +111,39 @@ class _SpacePageState extends State<SpacePage> {
   }
 
   void turn(int deltaTimeSinceLastTurn) {
-    List<HasTurn> ships = spaceObjects.where((o) => !o.isMissile()).toList();
-    List<HasTurn> missiles = spaceObjects.where((o) => o.isMissile()).toList();
+    if (running) {
+      List<HasTurn> ships = spaceObjects.where((o) => !o.isMissile()).toList();
+      List<HasTurn> missiles =
+          spaceObjects.where((o) => o.isMissile()).toList();
 
-    // Calculate missile impacts
-    missiles.forEach((HasTurn m) =>
-        ships.where((s) => isImpact(m, s)).forEach((s) { s.impacted(m);m.impacted(s);}));
+      // Calculate missile impacts
+      missiles.forEach(
+          (HasTurn m) => ships.where((s) => isImpact(m, s)).forEach((s) {
+                s.impacted(m);
+                m.impacted(s);
+              }));
 
-    // Calculate new position for each of the space objects
-    setState(() => spaceObjectsPositionedForTurn =
-        spaceObjects.map((t) => t.performTurn(deltaTimeSinceLastTurn, tapX, tapY)).toList());
+      // Calculate new position for each of the space objects
+      setState(() => spaceObjectsPositionedForTurn = spaceObjects
+          .map((t) => t.performTurn(deltaTimeSinceLastTurn, tapX, tapY))
+          .toList());
 
-    // Remove old space objects
-    spaceObjects.removeWhere((HasTurn t) {
-      return t.isGoneOfSpace(MyApp.width, MyApp.height);
-    });
+      // Remove old space objects
+      spaceObjects.removeWhere((HasTurn t) {
+        return t.isGoneOfSpace(MyApp.width, MyApp.height);
+      });
+
+      // Test if game is over, when sno ship is found
+      if (spaceObjects.where((HasTurn t) => !t.isMissile()).length == 0) {
+        running = false;
+        t.cancel();
+        Navigator.of(context).pushNamed('/');
+      }
+    }
 
     // FIXME Quick solution to ad missile
-    if (spaceObjects.length == 1) {
-      spaceObjects.add(new Missile());
+    if (spaceObjects.length < 4 && running) {
+      spaceObjects.add(new Missile(MyApp.width, MyApp.height));
     }
   }
 
@@ -132,8 +175,8 @@ class _SpacePageState extends State<SpacePage> {
 
   @override
   Widget build(BuildContext context) {
+    running = true;
     if (MyApp.width == null) {
-      running=true;
       MyApp.height = MediaQuery.of(context).size.height;
       MyApp.width = MediaQuery.of(context).size.width;
       print(
@@ -158,7 +201,7 @@ class _SpacePageState extends State<SpacePage> {
       child: new Container(
         decoration: new BoxDecoration(
           image: new DecorationImage(
-            image: new AssetImage("assets/images/maxresdefault.jpg"),
+            image: new AssetImage("assets/images/space2.png"),
             fit: BoxFit.cover,
           ),
         ),
