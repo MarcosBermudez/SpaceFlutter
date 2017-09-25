@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:duende/SapceObjects.dart';
+import 'package:spaceflutter/SapceObjects.dart';
 
 void main() {
   runApp(new MyApp());
@@ -44,14 +44,14 @@ class MenuPage extends StatelessWidget {
       child: new GestureDetector(
         child: new Container(
           color: const Color(0xFF00FF00),
-          width: 120.0,
-          height: 25.0,
+          width: 180.0,
+          height: 60.0,
           alignment: FractionalOffset.center,
           child: new Text(
             'Start Game',
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
-            style: new TextStyle(fontWeight: FontWeight.bold),
+            style: new TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),
           ),
         ),
         onTapUp: ((_) => Navigator.of(context).pushNamed('/space')),
@@ -145,19 +145,38 @@ class _SpacePageState extends State<SpacePage> {
         return isGone;
       });
 
+      // GamePlay Add missiles
+      if (spaceObjects.length < numMissiles - 1 && running) {
+        // There is 5% of chance to add new missile
+        if (new Random().nextInt(100) < 3) {
+          spaceObjects.add(new Missile(MyApp.width, MyApp.height));
+        }
+      }
+
       // Test if game is over, when sno ship is found
       if (spaceObjects.where((HasTurn t) => !t.isMissile()).length == 0) {
         running = false;
         t.cancel();
-        Navigator.of(context).pushNamed('/');
-      }
-    }
+        spaceObjectsPositionedForTurn = [
+          new Positioned(
+              top: (MyApp.height - 60) / 2,
+              left: (MyApp.width - 180) / 2,
+              child: new GestureDetector(
+                  child: new Container(
+                    child: new Text(
+                      "Game Over",
+                      style: new TextStyle(fontSize: 20.0),
+                    ),
+                    color: Colors.red,
+                    width: 180.0,
+                    height: 60.0,
+                    alignment: FractionalOffset.center,
+                  ),
+                onTapDown: (_) => Navigator.of(context).pushNamed('/'),
+              ),
+          )
+        ];
 
-    // FIXME Quick solution to ad missile
-    if (spaceObjects.length < numMissiles - 1 && running) {
-      // There is 20% of chance to add new missile
-      if (new Random().nextInt(100) < 10) {
-        spaceObjects.add(new Missile(MyApp.width, MyApp.height));
       }
     }
   }
@@ -231,14 +250,13 @@ class _SpacePageState extends State<SpacePage> {
                   width: 120.0,
                   height: 25.0,
                   alignment: FractionalOffset.center,
-                  child : new Text("Points " + points.toString(),
-                  style: new TextStyle(
-                    fontWeight: FontWeight.bold,
+                  child: new Text(
+                    "Points " + points.toString(),
+                    style: new TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                )
-              )
-            ),
+                ))),
         ),
       ),
     );

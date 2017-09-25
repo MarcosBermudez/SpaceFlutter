@@ -1,5 +1,5 @@
-name: duende
-description: A new Flutter project.
+name: spaceflutter
+description: An open source space game made in Flutter.
 
 dependencies:
   flutter:
@@ -35,16 +35,6 @@ flutter:
     - assets/images/ships/yelow0/8.png
     - assets/images/ships/yelow0/9.png
     - assets/images/ships/yelow0/10.png
-    - assets/images/ships/red0/1.png
-    - assets/images/ships/red0/2.png
-    - assets/images/ships/red0/3.png
-    - assets/images/ships/red0/4.png
-    - assets/images/ships/red0/5.png
-    - assets/images/ships/red0/6.png
-    - assets/images/ships/red0/7.png
-    - assets/images/ships/red0/8.png
-    - assets/images/ships/red0/9.png
-    - assets/images/ships/red0/10.png
     
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg

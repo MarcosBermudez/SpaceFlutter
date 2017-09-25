@@ -1,6 +1,6 @@
-# duende
+# Space Flutter
 
-A new Flutter project.
+An open source space game made in Flutter. The main purpose of this application is to make a sample of the capabilities of Flutter to make a easy game.
 
 ## Getting Started
 
