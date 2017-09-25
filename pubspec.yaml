@@ -25,6 +25,16 @@ flutter:
   assets:
     - assets/images/space1.png
     - assets/images/space2.png
+    - assets/images/ships/yelow0/1.png
+    - assets/images/ships/yelow0/2.png
+    - assets/images/ships/yelow0/3.png
+    - assets/images/ships/yelow0/4.png
+    - assets/images/ships/yelow0/5.png
+    - assets/images/ships/yelow0/6.png
+    - assets/images/ships/yelow0/7.png
+    - assets/images/ships/yelow0/8.png
+    - assets/images/ships/yelow0/9.png
+    - assets/images/ships/yelow0/10.png
     - assets/images/ships/red0/1.png
     - assets/images/ships/red0/2.png
     - assets/images/ships/red0/3.png
@@ -35,6 +45,7 @@ flutter:
     - assets/images/ships/red0/8.png
     - assets/images/ships/red0/9.png
     - assets/images/ships/red0/10.png
+    
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 
