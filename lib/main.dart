@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:duende/SapceObjects.dart';
@@ -23,8 +24,10 @@ class MyApp extends WidgetsApp {
   static MenuPage menu = new MenuPage();
 
   static Route<dynamic> myRouteFactory(RouteSettings settings) =>
-      new PageRouteBuilder(pageBuilder: (BuildContext context,
-      Animation<double> animation, Animation<double> secondaryAnimation)=>settings.name=='/'?menu:new SpacePage());
+      new PageRouteBuilder(
+          pageBuilder: (BuildContext context, Animation<double> animation,
+                  Animation<double> secondaryAnimation) =>
+              settings.name == '/' ? menu : new SpacePage());
 }
 
 class MenuPage extends StatelessWidget {
@@ -83,6 +86,10 @@ class _SpacePageState extends State<SpacePage> {
 
   bool running = false;
 
+  int numMissiles = 3;
+
+  int points = 0;
+
   @override
   void initState() {
     super.initState();
@@ -130,7 +137,12 @@ class _SpacePageState extends State<SpacePage> {
 
       // Remove old space objects
       spaceObjects.removeWhere((HasTurn t) {
-        return t.isGoneOfSpace(MyApp.width, MyApp.height);
+        bool isGone = t.isGoneOfSpace(MyApp.width, MyApp.height);
+        if (t.isMissile() && isGone) {
+          numMissiles += 1;
+          points += 1;
+        }
+        return isGone;
       });
 
       // Test if game is over, when sno ship is found
@@ -142,8 +154,11 @@ class _SpacePageState extends State<SpacePage> {
     }
 
     // FIXME Quick solution to ad missile
-    if (spaceObjects.length < 4 && running) {
-      spaceObjects.add(new Missile(MyApp.width, MyApp.height));
+    if (spaceObjects.length < numMissiles - 1 && running) {
+      // There is 20% of chance to add new missile
+      if (new Random().nextInt(100) < 10) {
+        spaceObjects.add(new Missile(MyApp.width, MyApp.height));
+      }
     }
   }
 
@@ -207,7 +222,23 @@ class _SpacePageState extends State<SpacePage> {
         ),
         child: new Stack(
           fit: StackFit.passthrough,
-          children: spaceObjectsPositionedForTurn,
+          children: new List.from(spaceObjectsPositionedForTurn)
+            ..add(new Positioned(
+                top: 30.0,
+                left: 20.0,
+                child: new Container(
+                  color: const Color(0xFF00FF00),
+                  width: 120.0,
+                  height: 25.0,
+                  alignment: FractionalOffset.center,
+                  child : new Text("Points " + points.toString(),
+                  style: new TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                )
+              )
+            ),
         ),
       ),
     );
