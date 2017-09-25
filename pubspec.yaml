@@ -25,6 +25,7 @@ flutter:
   assets:
     - assets/images/space1.png
     - assets/images/space2.png
+    - assets/images/ships/misile.png
     - assets/images/ships/yelow0/1.png
     - assets/images/ships/yelow0/2.png
     - assets/images/ships/yelow0/3.png

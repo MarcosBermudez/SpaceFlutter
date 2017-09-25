@@ -4,14 +4,14 @@ import 'dart:math';
 // Images from
 // https://opengameart.org/content/space-ship-construction-kit
 // https://opengameart.org/content/25-special-effects-rendered-with-blender
-class HasTurn {
-  Positioned performTurn(
+class SpaceObject {
+  Positioned calculateNextTurnPosition(
           int deltaTimeSinceLastTurn, double tapX, double tapY) =>
       null;
 
   bool isMissile() => false;
 
-  void impacted(HasTurn object) {}
+  void impacted(SpaceObject object) {}
 
   bool isGoneOfSpace(double width, double height) => true;
 
@@ -21,9 +21,9 @@ class HasTurn {
   double height = 15.0;
 }
 
-class Spaceship extends StatefulWidget implements HasTurn {
+class Spaceship extends StatefulWidget implements SpaceObject {
 
-  final int spaceshipSpeed = 100; // In pixels by second
+  final int spaceshipSpeed = 250; // In pixels by second
 
   // Navigation variables
   double lastTop = 300.0;
@@ -38,7 +38,7 @@ class Spaceship extends StatefulWidget implements HasTurn {
   _ShipSpaceshipState state = new _ShipSpaceshipState();
 
   @override
-  Positioned performTurn(int deltaTimeSinceLastTurn, double tapX, double tapY) {
+  Positioned calculateNextTurnPosition(int deltaTimeSinceLastTurn, double tapX, double tapY) {
     if (lastPosition != null && tapX != null && !state.isImpacted()) {
 
       // Adjust navigation into the middle of plane
@@ -77,7 +77,7 @@ class Spaceship extends StatefulWidget implements HasTurn {
   bool isGoneOfSpace(double width, double height) => state.isDestroyed();
 
   @override
-  void impacted(HasTurn object) {
+  void impacted(SpaceObject object) {
       state.impacted();
   }
 
@@ -89,8 +89,6 @@ class Spaceship extends StatefulWidget implements HasTurn {
 
 class _ShipSpaceshipState extends State<Spaceship> {
   int impactedTurn = 0;
-
-  Image image = new Image.asset('assets/images/ships/yelow0/1.png');
 
   int deltaSinceLastState = 0;
   int timePerState = 50;
@@ -115,6 +113,7 @@ class _ShipSpaceshipState extends State<Spaceship> {
 
   @override
   Widget build(BuildContext context) {
+    Image image = new Image.asset('assets/images/ships/yelow0/1.png');
     if (isImpacted() && !isDestroyed()) {
       image = new Image.asset(
           'assets/images/ships/yelow0/' + impactedTurn.toString() + '.png');
@@ -128,7 +127,7 @@ class _ShipSpaceshipState extends State<Spaceship> {
   bool isDestroyed() => impactedTurn == 10;
 }
 
-class Missile extends StatelessWidget implements HasTurn {
+class Missile extends StatelessWidget implements SpaceObject {
 
   final Color color;
   final int speed = 150; // Speed in pixels by second
@@ -136,7 +135,7 @@ class Missile extends StatelessWidget implements HasTurn {
   double lastTop = 0.0;
   double lastLeft = 100.0;
   double width = 10.0;
-  double height = 15.0;
+  double height = 22.0;
   bool explosed = false;
 
   Missile(double width, double height,[this.color = Colors.red]){
@@ -145,14 +144,11 @@ class Missile extends StatelessWidget implements HasTurn {
 
   @override
   Widget build(BuildContext context) {
-    return new CustomPaint(
-      size: new Size(width, height),
-      painter: new MissilePainter(color),
-    );
+    return new Image.asset("assets/images/ships/misile.png");
   }
 
   @override
-  Positioned performTurn(int deltaTimeSinceLastTurn, double tapX, double tapY) {
+  Positioned calculateNextTurnPosition(int deltaTimeSinceLastTurn, double tapX, double tapY) {
     int distanceMoved = ((speed * deltaTimeSinceLastTurn) / 1000).round();
 
     lastTop = lastTop + distanceMoved;
@@ -167,38 +163,9 @@ class Missile extends StatelessWidget implements HasTurn {
   bool isGoneOfSpace(double width, double height) => lastTop > height || isExplosed();
 
   @override
-  void impacted(HasTurn object) {
+  void impacted(SpaceObject object) {
     explosed=true;
   }
 
   bool isExplosed() => explosed;
-}
-
-class MissilePainter extends CustomPainter {
-  static const barWidth = 10.0;
-  static const barHeight = 15.0;
-
-  MissilePainter(this.color);
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = new Paint()
-      ..color = this.color
-      ..style = PaintingStyle.fill;
-
-    canvas.drawRect(
-      new Rect.fromLTWH(
-        (size.width - barWidth) / 2.0,
-        size.height - barHeight,
-        barWidth,
-        barHeight,
-      ),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(MissilePainter old) => false;
 }
