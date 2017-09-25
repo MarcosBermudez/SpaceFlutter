@@ -5,7 +5,7 @@ import 'package:spaceflutter/SpaceFlutterApplication.dart';
 class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (SpaceFlutterApplication.width == null) {
+    if (SpaceFlutterApplication.width == null || SpaceFlutterApplication.width==0.0 ) {
       SpaceFlutterApplication.height = MediaQuery.of(context).size.height;
       SpaceFlutterApplication.width = MediaQuery.of(context).size.width;
       print("Size is " +
