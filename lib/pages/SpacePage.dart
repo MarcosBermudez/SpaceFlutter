@@ -85,7 +85,7 @@ class SpacePageState extends State<SpacePage> {
                   height: 25.0,
                   alignment: FractionalOffset.center,
                   child: new Text(
-                    "Points " + points.toString(),
+                    "Points $points" ,
                     style: new TextStyle(
                       fontWeight: FontWeight.bold,
                     ),

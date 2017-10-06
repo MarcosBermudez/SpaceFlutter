@@ -8,10 +8,6 @@ class MenuPage extends StatelessWidget {
     if (SpaceFlutterApplication.width == null || SpaceFlutterApplication.width==0.0 ) {
       SpaceFlutterApplication.height = MediaQuery.of(context).size.height;
       SpaceFlutterApplication.width = MediaQuery.of(context).size.width;
-      print("Size is " +
-          SpaceFlutterApplication.height.toString() +
-          "," +
-          SpaceFlutterApplication.width.toString());
     }
 
     return new Container(

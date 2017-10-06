@@ -116,7 +116,7 @@ class _ShipSpaceshipState extends State<Spaceship> {
     Image image = new Image.asset('assets/images/ships/yelow0/1.png');
     if (isImpacted() && !isDestroyed()) {
       image = new Image.asset(
-          'assets/images/ships/yelow0/' + impactedTurn.toString() + '.png');
+          'assets/images/ships/yelow0/$impactedTurn.png');
       impactedTurn++;
     }
     return image;
