@@ -45,7 +45,7 @@ class SpacePageState extends State<SpacePage> {
                 height: 60.0,
                 alignment: FractionalOffset.center,
               ),
-              onTapDown: (_) => Navigator.of(context).pushNamed('/'),
+              onTapDown: (_) => Navigator.of(context).pop(),
             ),
           )
         ],
